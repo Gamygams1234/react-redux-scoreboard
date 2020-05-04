@@ -1,61 +1,57 @@
+import React from "react";
+import Stopwatch from "../components/Stopwatch";
 
 const INITIAL_STATE = {
   players: [
     {
-      name: 'Jim Hoskins',
+      name: "Jim Hoskins",
       score: 31,
     },
     {
-      name: 'Andrew Chalkley',
+      name: "Andrew Chalkley",
       score: 20,
     },
     {
-      name: 'Alena Holligan',
+      name: "Alena Holligan",
       score: 50,
     },
   ],
-}
+};
 
-const Application = React.createClass({
+const Scoreboard = React.createClass({
   getInitialState: function () {
     return INITIAL_STATE;
   },
-  onScoreChange: function(index, delta) {
+  onScoreChange: function (index, delta) {
     this.state.players[index].score += delta;
     this.setState(this.state);
   },
 
-  onAddPlayer: function(name) {
+  onAddPlayer: function (name) {
     this.state.players.push({ name: name, score: 0 });
     this.setState(this.state);
   },
 
-  onRemovePlayer: function(index) {
+  onRemovePlayer: function (index) {
     this.state.players.splice(index, 1);
     this.setState(this.state);
   },
 
-  render: function() {
+  render: function () {
     return (
       <div className="scoreboard">
         <Header players={this.state.players} />
         <div className="players">
-          {this.state.players.map(function(player, index) {
-             return (
-               <Player
-                 name={player.name}
-                 score={player.score}
-                 key={player.name}
-                 onScoreChange={(delta) => this.onScoreChange(index, delta)}
-                 onRemove={() => this.onRemovePlayer(index)}
-               />
-             );
-           }.bind(this))}
+          {this.state.players.map(
+            function (player, index) {
+              return <Player name={player.name} score={player.score} key={player.name} onScoreChange={(delta) => this.onScoreChange(index, delta)} onRemove={() => this.onRemovePlayer(index)} />;
+            }.bind(this)
+          )}
         </div>
         <AddPlayerForm onAdd={this.onAddPlayer} />
       </div>
     );
-  }
+  },
 });
 
 // ----------------------------------------------
@@ -78,7 +74,7 @@ Header.propTypes = {
 // -----------------------------------------------------------------------
 function Stats(props) {
   const playerCount = props.players.length;
-  const totalPoints = props.players.reduce(function(total, player) {
+  const totalPoints = props.players.reduce(function (total, player) {
     return total + player.score;
   }, 0);
 
@@ -95,7 +91,7 @@ function Stats(props) {
         </tr>
       </tbody>
     </table>
-  )
+  );
 }
 
 Stats.propTypes = {
@@ -104,78 +100,15 @@ Stats.propTypes = {
 
 // ------------------------------------------------------------------------
 
-const Stopwatch = React.createClass({
-  getInitialState: function () {
-    return ({
-      running: false,
-      previouseTime: 0,
-      elapsedTime: 0,
-    });
-  },
-
-  componentDidMount: function () {
-    this.interval = setInterval(this.onTick);
-  },
-
-  componentWillUnmount: function () {
-    clearInterval(this.interval);
-  },
-
-
-  onStart: function () {
-    this.setState({
-      running: true,
-      previousTime: Date.now(),
-    });
-  },
-
-  onStop: function () {
-    this.setState({
-      running: false,
-    });
-  },
-
-  onReset: function () {
-    this.setState({
-      elapsedTime: 0,
-      previousTime: Date.now(),
-    });
-  },
-
-  onTick: function () {
-    if (this.state.running) {
-      var now = Date.now();
-      this.setState({
-        elapsedTime: this.state.elapsedTime + (now - this.state.previousTime),
-        previousTime: Date.now(),
-      });
-    }
-  },
-
-  render: function () {
-    var seconds = Math.floor(this.state.elapsedTime / 1000);
-    return (
-      <div className="stopwatch" >
-        <h2>Stopwatch</h2>
-        <div className="stopwatch-time"> {seconds} </div>
-        { this.state.running ?
-          <button onClick={this.onStop}>Stop</button>
-          :
-          <button onClick={this.onStart}>Start</button>
-        }
-        <button onClick={this.onReset}>Reset</button>
-      </div>
-    )
-  }
-});
-
 // ----------------------------------------------------------------------
 
 function Player(props) {
   return (
     <div className="player">
       <div className="player-name">
-        <a className="remove-player" onClick={props.onRemove}>✖</a>
+        <a className="remove-player" onClick={props.onRemove}>
+          ✖
+        </a>
         {props.name}
       </div>
       <div className="player-score">
@@ -195,17 +128,17 @@ Player.propTypes = {
 // ----------------------------------------------------------
 
 function Counter(props) {
- return (
-   <div className="counter" >
-     <button className="counter-action decrement" onClick={() => props.onChange(-1)}>
-       -
-     </button>
-     <div className="counter-score"> {props.score} </div>
-     <button className="counter-action increment" onClick={() => props.onChange(1)}>
-       +
-     </button>
-   </div>
- );
+  return (
+    <div className="counter">
+      <button className="counter-action decrement" onClick={() => props.onChange(-1)}>
+        -
+      </button>
+      <div className="counter-score"> {props.score} </div>
+      <button className="counter-action increment" onClick={() => props.onChange(1)}>
+        +
+      </button>
+    </div>
+  );
 }
 
 Counter.propTypes = {
@@ -219,7 +152,7 @@ const AddPlayerForm = React.createClass({
   },
 
   getInitialState: function () {
-    return { name: '' };
+    return { name: "" };
   },
 
   onNameChange: function (e) {
@@ -230,23 +163,19 @@ const AddPlayerForm = React.createClass({
   onSubmit: function (e) {
     if (e) e.preventDefault();
     this.props.onAdd(this.state.name);
-    this.setState({ name: '' });
+    this.setState({ name: "" });
   },
 
   render: function () {
     return (
       <div className="add-player-form">
         <form onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            value={this.state.name}
-            onChange={this.onNameChange}
-            placeholder="Player Name"
-          />
+          <input type="text" value={this.state.name} onChange={this.onNameChange} placeholder="Player Name" />
           <input type="submit" value="Add Player" />
         </form>
       </div>
     );
-  }
+  },
 });
 
+export default Scoreboard;
